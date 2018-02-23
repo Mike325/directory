@@ -1,0 +1,18 @@
+{
+    ".projections.json": {
+        "type": "Projections"
+    },
+    "main.py": {
+        "type": "Main"
+    },
+    "logger/*.py": {
+        "type": "Logger"
+    },
+    "costumer/*.py": {
+        "type": "Costumer"
+    },
+    "database/*.py": {
+        "type": "Database"
+    }
+}
+
