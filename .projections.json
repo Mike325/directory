@@ -13,6 +13,9 @@
     },
     "database/*.py": {
         "type": "Database"
+    },
+    "btree/*.py": {
+        "type": "Btree"
     }
 }
 
