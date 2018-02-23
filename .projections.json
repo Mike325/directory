@@ -8,13 +8,25 @@
     "logger/*.py": {
         "type": "Logger"
     },
+    "logger/messages.py": {
+        "type": "Logger"
+    },
     "costumer/*.py": {
+        "type": "Costumer"
+    },
+    "costumer/person.py": {
         "type": "Costumer"
     },
     "database/*.py": {
         "type": "Database"
     },
+    "database/handler.py": {
+        "type": "Database"
+    },
     "btree/*.py": {
+        "type": "Btree"
+    },
+    "btree/btree.py": {
         "type": "Btree"
     }
 }
