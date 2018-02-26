@@ -1,3 +1,4 @@
 [submodule "btree"]
 	path = btree
-	url = git@github.com:Mike325/btree
+	url = https://github.com/mike325/btree.git
+
