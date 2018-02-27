@@ -23,6 +23,12 @@
     "database/handler.py": {
         "type": "Database"
     },
+    "cli/*.py": {
+        "type": "CLI"
+    },
+    "cli/functions.py": {
+        "type": "CLI"
+    },
     "btree/*.py": {
         "type": "Btree"
     },
