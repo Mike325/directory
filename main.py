@@ -117,7 +117,8 @@ def update_record():
                 for key, value in record.items():
                     if key == "id":
                         continue
-                    new_record = input("Actual Value -> {current_name}: {current_record}, Enter new value or leave it empty: ".format(current_name=translits.get(key), current_record=value))
+                    input_str = "Actual Value -> {current_name}: {current_record}, Enter new value or leave it empty: "
+                    new_record = input(input_str.format(current_name=translits.get(key), current_record=value))
                     if new_record:
                         record[key] = new_record
                         print("User updated successfully")

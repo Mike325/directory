@@ -2,8 +2,17 @@
     ".projections.json": {
         "type": "Projections"
     },
+    ".travis.yml": {
+        "type": "Travis"
+    },
     "main.py": {
         "type": "Main"
+    },
+    "test/*.py": {
+        "type": "Test"
+    },
+    "setup.cfg": {
+        "type": "Config"
     },
     "logger/*.py": {
         "type": "Logger"
