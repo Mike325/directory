@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # coding:utf-8
 
 import argparse
@@ -84,12 +84,12 @@ def __parse_arguments():
 
 # ==================== CREATE ====================
 def create_record():
-    name = raw_input("Enter name: ")
-    last_name = raw_input("Enter last name: ")
-    address = raw_input("Enter address: ")
-    cellphone = raw_input("Enter cellphone: ")
-    email = raw_input("Enter email address: ")
-    social_network = raw_input("Enter social network: ")
+    name = input("Enter name: ")
+    last_name = input("Enter last name: ")
+    address = input("Enter address: ")
+    cellphone = input("Enter cellphone: ")
+    email = input("Enter email address: ")
+    social_network = input("Enter social network: ")
     for record in elements:
         if set([name, last_name, address, cellphone, email, social_network]).issubset(record.values()):
             print("Record: {name} {last_name} {cellphone} is already in the database")
@@ -111,13 +111,13 @@ def create_record():
 def update_record():
     if elements:
         print_to_console()
-        record_id = raw_input("Input the user key: ")
+        record_id = input("Input the user key: ")
         for record in elements:
             if record["id"] == record_id:
                 for key, value in record.items():
                     if key == "id":
                         continue
-                    new_record = raw_input("Actual Value -> {current_name}: {current_record}, Enter new value or leave it empty: ".format(current_name=translits.get(key), current_record=value))
+                    new_record = input("Actual Value -> {current_name}: {current_record}, Enter new value or leave it empty: ".format(current_name=translits.get(key), current_record=value))
                     if new_record:
                         record[key] = new_record
                         print("User updated successfully")
@@ -132,7 +132,7 @@ def update_record():
 def delete_record():
     if elements:
         print_to_console()
-        record_id = raw_input("Enter user ID: ")
+        record_id = input("Enter user ID: ")
         for record in elements:
             if record["id"] == record_id:
                 elements.remove(record)
@@ -166,7 +166,7 @@ def main():
 
     # While True is always a bad idea
     while action.upper() != "E":
-        action = raw_input(MAIN_MENU)
+        action = input(MAIN_MENU)
         if action == "1":
             create_record()
         elif action == "2":
