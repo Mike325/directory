@@ -12,3 +12,11 @@ install:
 # command to run tests
 script:
   - flake8 --ignore=E501
+notifications:
+  email:
+    recipients:
+      - miguel.8a.hdez@gmail.com
+      - feryo1@gmail.com
+      - eduardo_pitt@hotmail.com
+    on_success: never # default: change
+    on_failure: always # default: always
