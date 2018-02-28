@@ -38,9 +38,8 @@ class HashTable(object):
             elif type(element) == str:
                 acomulator += ord(element)
             else:
-                print "Invalid Element"
-        return acomulator % 4    
-        
-
-if __name__ == "__main__":
+                print("Invalid Element")
+        return acomulator % 4
+      
+      if __name__ == "__main__":
     raise Exception("This is a handle, not a standalone script")
