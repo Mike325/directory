@@ -28,10 +28,7 @@ def hashAscii(string):
         raise Exception("Only strings are allow to be used in this hash function")
     acomulator = 0
     for element in string:
-        if type(element) == str:
-            acomulator += ord(element)
-        else:
-            raise Exception("Only strings are allow to be used in this hash function")
+        acomulator += ord(element)
     return acomulator % 4
 
 
