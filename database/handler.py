@@ -23,23 +23,16 @@ __header__ = """
 """
 
 
-class HashTable(object):
-    """Hash table to handle directory data"""
-
-    def __init__(self, arg):
-        super(HashTable, self).__init__()
-        self.arg = arg
-
-    def hashAscii(string):
-        acomulator = 0
-        for element in string:
-            if type(element) == int:
-                acomulator += chr(element)
-            elif type(element) == str:
-                acomulator += ord(element)
-            else:
-                print("Invalid Element")
-        return acomulator % 4
+def hashAscii(string):
+    if type(string) != str:
+        raise Exception("Only strings are allow to be used in this hash function")
+    acomulator = 0
+    for element in string:
+        if type(element) == str:
+            acomulator += ord(element)
+        else:
+            raise Exception("Only strings are allow to be used in this hash function")
+    return acomulator % 4
 
 
 if __name__ == "__main__":
