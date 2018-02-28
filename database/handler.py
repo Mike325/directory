@@ -43,4 +43,4 @@ class HashTable(object):
 
 
 if __name__ == "__main__":
-  raise Exception("This is a handle, not a standalone script")
+    raise Exception("This is a handle, not a standalone script")
