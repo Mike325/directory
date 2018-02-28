@@ -30,6 +30,17 @@ class HashTable(object):
         super(HashTable, self).__init__()
         self.arg = arg
 
+    def hashAscii(string):
+        acomulator = 0
+        for element in string:
+            if type(element) == int:
+                acomulator += chr(element)
+            elif type(element) == str:
+                acomulator += ord(element)
+            else:
+                print("Invalid Element")
+        return acomulator % 4
+
 
 if __name__ == "__main__":
     raise Exception("This is a handle, not a standalone script")
