@@ -50,10 +50,3 @@ def print_to_console():
             print("========================================================================================================")
     else:
         print("Empty directory")
-
-
-def get_next_id():
-    if len(elements):
-        max_id = int(max(i["id"] for i in elements))
-        return str(max_id + 1)
-    return 0

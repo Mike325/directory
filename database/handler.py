@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 
+import json
+from os import path
 from time import time
 from logger.messages import debug
+from logger.messages import error
+from btee.btree import Btree
 
 __header__ = """
                               -`
@@ -25,7 +29,7 @@ __header__ = """
             .`                                 `/
 """
 
-# Global because we don't want to recaulculate thi every time
+# Global because we don't want to recalculate it every time
 __values = []
 
 
@@ -53,7 +57,7 @@ def base64Values():
     __values.append("/")
 
     # This array is global but we allow other libs to get base 64 elements
-    # witout accesing the global value
+    # without accessing the global value
     return __values
 
 
@@ -86,8 +90,10 @@ def hashBase64(string, tsize=4):
         bstring = bstring[6:]
 
     end = time()
+    hashvalue = sum(ord(x) for x in encode)
+    debug("Hash: {0}".format(hashvalue))
     debug("Hashing time: {0}".format(end - start))
-    return sum(ord(x) for x in encode) % 4
+    return hashvalue % 4
 
 
 def hashAscii(string, tsize=4):
@@ -96,8 +102,230 @@ def hashAscii(string, tsize=4):
         raise Exception(
             "Only strings are allow to be used in this hash function")
     end = time()
+    hashvalue = sum(ord(x) for x in string)
+    debug("Hash: {0}".format(hashvalue))
     debug("Hashing time: {0}".format(end - start))
-    return sum(ord(x) for x in string) % tsize
+    return hashvalue % tsize
+
+
+class HashDataBase(object):
+    """  Simple data base with N number of register, each one with its own tree"""
+
+    class Register(object):
+        """docstring for Register"""
+
+        def __init__(self,
+                     name,
+                     last_name,
+                     address,
+                     cellphone,
+                     email,
+                     social_network):
+            self.name = name
+            self.last_name = last_name
+            self.address = address
+            self.cellphone = cellphone
+            self.email = email
+            self.social_network = social_network
+
+    def __init__(self, size=4, json_db=None, hashfunction=None):
+        super(HashDataBase, self).__init__()
+        self.size = size
+        self.container = []
+        self.collitions = []
+
+        for item in range(0, size):
+            self.container.append(Btree())
+            self.collitions.append(0)
+
+        self.hashfunction = hashBase64 if hashfunction is None else hashfunction
+
+        if json_db is not None and path.isfile(json_db):
+            with open(json_db, "r") as database:
+                data = json.load(database)
+                for register, value in data.items():
+                    self.insert(data[register])
+        elif json_db is not None and not path.isfile(json_db):
+            error("{0} must be a valid json file to load the registers")
+
+    def _select_search_type(self):
+        """TODO: Docstring for _select_search_type.
+        :returns: TODO
+
+        """
+        selection = ""
+        types = ["Name", "Last name", "Cellphone"]
+        while selection != "1" and selection != "2" and selection != "3":
+            selection = input("""Please select an option:
+                            1) {0}
+                            2) {1}
+                            3) {2}""".format(types[0], types[1], types[2]))
+
+        search_element = input("Enter the {0}: ".format(types[int(selection)]))
+
+        return (search_element, selection)
+
+    def insert(self, register=None):
+        """TODO: Docstring for insert.
+
+        :register: TODO
+        :returns: TODO
+
+        """
+        if register is None:
+            name = input("Enter name: ")
+            last_name = input("Enter last name: ")
+            address = input("Enter address: ")
+            cellphone = input("Enter cellphone: ")
+            email = input("Enter email address: ")
+            social_network = input("Enter social network: ")
+            register = self.Register(name,
+                                     last_name,
+                                     address,
+                                     cellphone,
+                                     email,
+                                     social_network)
+        rc = False
+        start = time()
+
+        if self.search(register=register) is not None:
+            hashvalue = self.hashfunction(name)
+            self.container[hashvalue].insert(register)
+            self.collitions[hashvalue] += 1
+            debug("Collitions in container {0}: {1}".format(
+                hashvalue, self.collitions[hashvalue]))
+            rc = True
+        else:
+            error("Name must be unic {0} already exists".format(name))
+
+        end = time()
+        debug("Insertion time {0}".format(end - start))
+
+        return rc
+
+    def update(self, register=None, name=None, last_name=None, cellphone=None):
+        """TODO: Docstring for insert.
+
+        :register: TODO
+        :returns: TODO
+
+        """
+        selected_type = -1
+        if register is None and name is None and last_name is None and cellphone is None:
+            parameter, selected_type = self._select_search_type()
+        elif register is not None:
+            parameter = register.name
+            selected_type = 0
+        elif name is not None:
+            parameter = name
+            selected_type = 0
+        elif last_name is not None:
+            parameter = last_name
+            selected_type = 1
+        elif cellphone is not None:
+            parameter = cellphone
+            selected_type = 2
+
+        rc = False
+        start = time()
+
+        hashvalue = self.hashfunction(parameter, selected_type)
+        register = self.container[hashvalue].search(parameter, selected_type)
+        if register is None:
+            error("{0} doesn't exists".format(parameter, selected_type))
+        else:
+            pass
+
+        end = time()
+        debug("Update time {0}".format(end - start))
+
+        return rc
+
+    def delete(self, register=None, name=None, last_name=None, cellphone=None):
+        """TODO: Docstring for insert.
+
+        :register: TODO
+        :returns: TODO
+
+        """
+        selected_type = -1
+        if register is None and name is None and last_name is None and cellphone is None:
+            parameter, selected_type = self._select_search_type()
+        elif register is not None:
+            parameter = register.name
+            selected_type = 0
+        elif name is not None:
+            parameter = name
+            selected_type = 0
+        elif last_name is not None:
+            parameter = last_name
+            selected_type = 1
+        elif cellphone is not None:
+            parameter = cellphone
+            selected_type = 2
+
+        rc = False
+        start = time()
+
+        hashvalue = self.hashfunction(parameter, selected_type)
+        if self.container[hashvalue].delete(parameter, selected_type) is None:
+            error("{0} could not be deleted".format(parameter, selected_type))
+        else:
+            self.collitions[hashvalue] -= 1
+            debug("Collitions in container {0}: {1}".format(
+                hashvalue, self.collitions[hashvalue]))
+
+        end = time()
+        debug("Deletion time {0}".format(end - start))
+
+        return rc
+
+    def search(self, register=None, name=None, last_name=None, cellphone=None):
+        """TODO: Docstring for insert.
+
+        :register: TODO
+        :returns: TODO
+
+        """
+        selected_type = -1
+        if register is None and name is None and last_name is None and cellphone is None:
+            parameter, selected_type = self._select_search_type()
+        elif register is not None:
+            parameter = register.name
+            selected_type = 0
+        elif name is not None:
+            parameter = name
+            selected_type = 0
+        elif last_name is not None:
+            parameter = last_name
+            selected_type = 1
+        elif cellphone is not None:
+            parameter = cellphone
+            selected_type = 2
+
+        start = time()
+
+        hashvalue = self.hashfunction(parameter, selected_type)
+        register = self.container[hashvalue].search(parameter, selected_type)
+        if register is not None:
+            return register
+        error("{0} doesn't exists".format(parameter, selected_type))
+
+        end = time()
+        debug("Search time {0}".format(end - start))
+
+        return None
+
+    def dump(self):
+        """TODO: Docstring for insert.
+
+        :returns: TODO
+
+        """
+        raise Exception("Not implemented")
+        # with open("hash_dump.json", "r") as db:
+        #     for item in self.container:
+        #         pass
 
 
 if __name__ == "__main__":
