@@ -5,7 +5,7 @@ import argparse
 # from time import time
 from logger.messages import status
 # from logger.messages import error
-# from logger.messages import debug
+# from logger.messages import verbose
 from logger import messages
 from database.data import MAIN_MENU
 from database.data import elements
@@ -59,7 +59,7 @@ def __parse_arguments():
                         type=int)
     parser.add_argument("-v",
                         "--verbose",
-                        help="Enable debug messages",
+                        help="Enable verbose messages",
                         required=False,
                         dest="verbose",
                         action="store_true")

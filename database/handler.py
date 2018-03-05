@@ -3,9 +3,9 @@
 import json
 from os import path
 from time import time
-from logger.messages import debug
+from logger.messages import verbose
 from logger.messages import error
-from btee.btree import Btree
+from btree.btree import BTree
 
 __header__ = """
                               -`
@@ -91,8 +91,8 @@ def hashBase64(string, tsize=4):
 
     end = time()
     hashvalue = sum(ord(x) for x in encode)
-    debug("Hash: {0}".format(hashvalue))
-    debug("Hashing time: {0}".format(end - start))
+    verbose("Hash: {0}".format(hashvalue))
+    verbose("Hashing time: {0}".format(end - start))
     return hashvalue % 4
 
 
@@ -103,8 +103,8 @@ def hashAscii(string, tsize=4):
             "Only strings are allow to be used in this hash function")
     end = time()
     hashvalue = sum(ord(x) for x in string)
-    debug("Hash: {0}".format(hashvalue))
-    debug("Hashing time: {0}".format(end - start))
+    verbose("Hash: {0}".format(hashvalue))
+    verbose("Hashing time: {0}".format(end - start))
     return hashvalue % tsize
 
 
@@ -135,7 +135,7 @@ class HashDataBase(object):
         self.collitions = []
 
         for item in range(0, size):
-            self.container.append(Btree())
+            self.container.append(BTree())
             self.collitions.append(0)
 
         self.hashfunction = hashBase64 if hashfunction is None else hashfunction
@@ -192,14 +192,14 @@ class HashDataBase(object):
             hashvalue = self.hashfunction(name)
             self.container[hashvalue].insert(register)
             self.collitions[hashvalue] += 1
-            debug("Collitions in container {0}: {1}".format(
+            verbose("Collitions in container {0}: {1}".format(
                 hashvalue, self.collitions[hashvalue]))
             rc = True
         else:
             error("Name must be unic {0} already exists".format(name))
 
         end = time()
-        debug("Insertion time {0}".format(end - start))
+        verbose("Insertion time {0}".format(end - start))
 
         return rc
 
@@ -237,7 +237,7 @@ class HashDataBase(object):
             pass
 
         end = time()
-        debug("Update time {0}".format(end - start))
+        verbose("Update time {0}".format(end - start))
 
         return rc
 
@@ -272,11 +272,11 @@ class HashDataBase(object):
             error("{0} could not be deleted".format(parameter, selected_type))
         else:
             self.collitions[hashvalue] -= 1
-            debug("Collitions in container {0}: {1}".format(
+            verbose("Collitions in container {0}: {1}".format(
                 hashvalue, self.collitions[hashvalue]))
 
         end = time()
-        debug("Deletion time {0}".format(end - start))
+        verbose("Deletion time {0}".format(end - start))
 
         return rc
 
@@ -312,7 +312,7 @@ class HashDataBase(object):
         error("{0} doesn't exists".format(parameter, selected_type))
 
         end = time()
-        debug("Search time {0}".format(end - start))
+        verbose("Search time {0}".format(end - start))
 
         return None
 

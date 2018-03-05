@@ -27,10 +27,10 @@
         "type": "Costumer"
     },
     "database/*.py": {
-        "type": "Database"
+        "type": "Handler"
     },
     "database/handler.py": {
-        "type": "Database"
+        "type": "Handler"
     },
     "cli/*.py": {
         "type": "CLI"
