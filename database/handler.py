@@ -135,7 +135,8 @@ class HashDataBase(object):
         self.collisions = []
 
         for item in range(0, size):
-            self.container.append(BTree())
+            # self.container.append(BTree())
+            self.container.append({})
             self.collisions.append(0)
 
         self.hashfunction = hashBase64 if hashfunction is None else hashfunction
@@ -192,13 +193,15 @@ class HashDataBase(object):
             hashvalue = self.hashfunction(name)
 
             isEmpty = False
-            if self.container[hashvalue].empty():
+            # if self.container[hashvalue].empty():
+            if len(self.container[hashvalue]) == 0:
                 isEmpty = True
-            if not isEmpty and self.container[hashvalue].insert(register):
+            # if not isEmpty and self.container[hashvalue].insert(register):
+            self.container[hashvalue][parameter] = register
+            if not isEmpty:
                 self.collisions[hashvalue] += 1
 
-            verbose("Collisions in container {0}: {1}".format(
-                hashvalue, self.collisions[hashvalue]))
+            verbose("Collisions in container {0}: {1}".format(hashvalue, self.collisions[hashvalue]))
             rc = True
         else:
             error("Name must be unic {0} already exists".format(name))
@@ -235,11 +238,14 @@ class HashDataBase(object):
         start = time()
 
         hashvalue = self.hashfunction(parameter, selected_type)
-        register = self.container[hashvalue].search(parameter, selected_type)
-        if register is None:
-            error("{0} doesn't exists".format(parameter, selected_type))
-        else:
+        # register = self.container[hashvalue].search(parameter, selected_type)
+        if parameter in self.container[hashvalue]:
             pass
+        else:
+            # if register is None:
+            error("{0} doesn't exists".format(parameter, selected_type))
+        # else:
+        #     pass
 
         end = time()
         verbose("Update time {0}".format(end - start))
@@ -273,14 +279,21 @@ class HashDataBase(object):
         start = time()
 
         hashvalue = self.hashfunction(parameter, selected_type)
-        rc = self.container[hashvalue].delete(parameter, selected_type)
-        if rc is None:
-            error("{0} could not be deleted".format(parameter, selected_type))
-        else:
+        if parameter is self.container[hashvalue]:
+            self.container[hashvalue].pop(parameter, None)
             if self.collisions[hashvalue] > 0:
                 self.collisions[hashvalue] -= 1
-            verbose("Collisions in container {0}: {1}".format(
-                hashvalue, self.collisions[hashvalue]))
+            verbose("Collisions in container {0}: {1}".format(hashvalue, self.collisions[hashvalue]))
+        else:
+            error("{0} could not be deleted".format(parameter, selected_type))
+
+        # rc = self.container[hashvalue].delete(parameter, selected_type)
+        # if rc is None:
+        #     error("{0} could not be deleted".format(parameter, selected_type))
+        # else:
+        #     if self.collisions[hashvalue] > 0:
+        #         self.collisions[hashvalue] -= 1
+        #     verbose("Collisions in container {0}: {1}".format(hashvalue, self.collisions[hashvalue]))
 
         end = time()
         verbose("Deletion time {0}".format(end - start))
@@ -312,15 +325,20 @@ class HashDataBase(object):
         start = time()
 
         hashvalue = self.hashfunction(parameter, selected_type)
-        register = self.container[hashvalue].search(parameter, selected_type)
-        if register is not None:
-            return register
-        error("{0} doesn't exists".format(parameter, selected_type))
+
+        register = None
+        if parameter in self.container[hashvalue]:
+            register = self.container[hashvalue][parameter]
+
+        # register = self.container[hashvalue].search(parameter, selected_type)
+        # if register is not None:
+        #     return register
+        # error("{0} doesn't exists".format(parameter, selected_type))
 
         end = time()
         verbose("Search time {0}".format(end - start))
 
-        return None
+        return register
 
     def dump(self):
         """TODO: Docstring for insert.
