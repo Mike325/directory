@@ -5,12 +5,14 @@ import argparse
 # from time import time
 from logger.messages import status
 # from logger.messages import error
-# from logger.messages import verbose
+from logger.messages import verbose
 from logger import messages
 from database.data import MAIN_MENU
 from database.data import elements
 from database.data import translits
 from database.handler import HashDataBase
+from database.handler import hashAscii
+from database.handler import hashBase64
 # from cli.functions import get_next_id
 from cli.functions import print_to_console
 # from database.data import spaces
@@ -75,6 +77,12 @@ def __parse_arguments():
                         required=False,
                         dest="quiet",
                         action="store_true")
+    parser.add_argument("-s",
+                        "--hash",
+                        help="Shows the version",
+                        required=False,
+                        type=int,
+                        dest="hash")
     parser.add_argument("--version",
                         help="Shows the version",
                         required=False,
@@ -127,9 +135,16 @@ def main():
     messages.quiet = cli_args.quiet
     messages.logger = cli_args.logger
 
+    if cli_args.hash == 1:
+        hashfunction = hashAscii
+    else:
+        hashfunction = hashBase64
+
+    verbose("Hash function {0}".format(repr(hashfunction.__name__)))
+
     action = ""
 
-    table = HashDataBase()
+    table = HashDataBase(hashfunction=hashfunction)
 
     # While True is always a bad idea
     while action.upper() != "E":
