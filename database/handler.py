@@ -5,7 +5,7 @@ from os import path
 from time import time
 from logger.messages import verbose
 from logger.messages import error
-from btree.btree import BTree
+# from btree.btree import BTree
 
 __header__ = """
                               -`
@@ -197,7 +197,7 @@ class HashDataBase(object):
             if len(self.container[hashvalue]) == 0:
                 isEmpty = True
             # if not isEmpty and self.container[hashvalue].insert(register):
-            self.container[hashvalue][parameter] = register
+            self.container[hashvalue][register.name] = register
             if not isEmpty:
                 self.collisions[hashvalue] += 1
 
