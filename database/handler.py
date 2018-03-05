@@ -285,7 +285,6 @@ class HashDataBase(object):
 
         :register: TODO
         :returns: TODO
-
         """
         selected_type = -1
         if register is None and name is None and last_name is None and cellphone is None:
