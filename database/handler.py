@@ -132,11 +132,11 @@ class HashDataBase(object):
         super(HashDataBase, self).__init__()
         self.size = size
         self.container = []
-        self.collitions = []
+        self.collisions = []
 
         for item in range(0, size):
             self.container.append(BTree())
-            self.collitions.append(0)
+            self.collisions.append(0)
 
         self.hashfunction = hashBase64 if hashfunction is None else hashfunction
 
@@ -190,10 +190,15 @@ class HashDataBase(object):
 
         if self.search(register=register) is not None:
             hashvalue = self.hashfunction(name)
-            self.container[hashvalue].insert(register)
-            self.collitions[hashvalue] += 1
-            verbose("Collitions in container {0}: {1}".format(
-                hashvalue, self.collitions[hashvalue]))
+
+            isEmpty = False
+            if self.container[hashvalue].empty():
+                isEmpty = True
+            if not isEmpty and self.container[hashvalue].insert(register):
+                self.collisions[hashvalue] += 1
+
+            verbose("Collisions in container {0}: {1}".format(
+                hashvalue, self.collisions[hashvalue]))
             rc = True
         else:
             error("Name must be unic {0} already exists".format(name))
@@ -268,12 +273,14 @@ class HashDataBase(object):
         start = time()
 
         hashvalue = self.hashfunction(parameter, selected_type)
-        if self.container[hashvalue].delete(parameter, selected_type) is None:
+        rc = self.container[hashvalue].delete(parameter, selected_type)
+        if rc is None:
             error("{0} could not be deleted".format(parameter, selected_type))
         else:
-            self.collitions[hashvalue] -= 1
-            verbose("Collitions in container {0}: {1}".format(
-                hashvalue, self.collitions[hashvalue]))
+            if self.collisions[hashvalue] > 0:
+                self.collisions[hashvalue] -= 1
+            verbose("Collisions in container {0}: {1}".format(
+                hashvalue, self.collisions[hashvalue]))
 
         end = time()
         verbose("Deletion time {0}".format(end - start))
