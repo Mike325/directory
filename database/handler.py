@@ -264,6 +264,7 @@ class HashDataBase(object):
                 if value < 1 or value > 6:
                     error("Not a valid option {0}".format(value))
                     continue
+                hashvalue = self.hashfunction(register.name)
                 if value == 6:
                     register.last_name = input("Enter last name: ")
                     register.address = input("Enter address: ")
@@ -272,11 +273,18 @@ class HashDataBase(object):
                     register.social_network = input("Enter social network: ")
                 else:
                     if value == 1:
+                        self.last_names[register.last_name].remove(hashvalue)
                         register.last_name = input("enter last name: ")
+                        if register.last_name not in self.last_names:
+                            self.last_names[register.last_name] = [hashvalue]
+                        else:
+                            self.last_names[register.last_name].append(hashvalue)
                     elif value == 2:
                         register.address = input("Enter address: ")
                     elif value == 3:
+                        self.numbers.pop(register.cellphone, None)
                         register.cellphone = input("Enter cellphone: ")
+                        self.numbers[register.cellphone] = hashvalue
                     elif value == 4:
                         register.email = input("Enter email address: ")
                     elif value == 5:
@@ -373,7 +381,7 @@ class HashDataBase(object):
                 container = self.numbers[parameter]
                 for key, value in self.container[container].items():
                     if value.cellphone == parameter:
-                        register = self.container[container][parameter]
+                        register = self.container[container][value.name]
                         break
             else:
                 error("The register {0} doesn't exists".format(parameter))
