@@ -5,6 +5,7 @@ from os import path
 from time import time
 from logger.messages import verbose
 from logger.messages import error
+from logger.messages import status
 # from btree.btree import BTree
 
 __header__ = """
@@ -114,12 +115,7 @@ class HashDataBase(object):
     class Register(object):
         """docstring for Register"""
 
-        def __init__(self,
-                     name,
-                     last_name,
-                     address,
-                     cellphone,
-                     email,
+        def __init__(self, name, last_name, address, cellphone, email,
                      social_network):
             self.name = name
             self.last_name = last_name
@@ -180,12 +176,8 @@ class HashDataBase(object):
             cellphone = input("Enter cellphone: ")
             email = input("Enter email address: ")
             social_network = input("Enter social network: ")
-            register = self.Register(name,
-                                     last_name,
-                                     address,
-                                     cellphone,
-                                     email,
-                                     social_network)
+            register = self.Register(name, last_name, address, cellphone,
+                                     email, social_network)
         rc = False
         start = time()
 
@@ -201,8 +193,10 @@ class HashDataBase(object):
             if not isEmpty:
                 self.collisions[hashvalue] += 1
 
-            verbose("Collisions in container {0}: {1}".format(hashvalue, self.collisions[hashvalue]))
+            verbose("Collisions in container {0}: {1}".format(
+                hashvalue, self.collisions[hashvalue]))
             rc = True
+            status("Register inserted")
         else:
             error("Name must be unic {0} already exists".format(name))
 
@@ -210,6 +204,52 @@ class HashDataBase(object):
         verbose("Insertion time {0}".format(end - start))
 
         return rc
+
+    def _update_field(self, register):
+        """Update a specific field of the register
+
+        :register: TODO
+        :returns: TODO
+
+        """
+        status("Please select the field you want to update")
+        valid = False
+        while not valid:
+            answer = input("""Please select a valid option:
+                    1) Last name
+                    2) Address
+                    3) Cellphone
+                    4) Email
+                    5) Social Network
+                    6) All""")
+            try:
+                value = int(answer)
+                if value < 1 or value > 6:
+                    error("Not a valid option {0}".format(value))
+                    continue
+                if value == 6:
+                    register.last_name = input("Enter last name: ")
+                    register.address = input("Enter address: ")
+                    register.cellphone = input("Enter cellphone: ")
+                    register.email = input("Enter email address: ")
+                    register.social_network = input("Enter social network: ")
+                else:
+                    if value == 1:
+                        register.last_name = input("enter last name: ")
+                    elif value == 2:
+                        register.address = input("Enter address: ")
+                    elif value == 3:
+                        register.cellphone = input("Enter cellphone: ")
+                    elif value == 4:
+                        register.email = input("Enter email address: ")
+                    elif value == 5:
+                        register.social_network = input("Enter social network: ")
+
+                valid = True
+
+            except Exception:
+                error("Please select a valid option from the menu from 1 to 6")
+        return register
 
     def update(self, register=None, name=None, last_name=None, cellphone=None):
         """TODO: Docstring for insert.
@@ -240,7 +280,10 @@ class HashDataBase(object):
         hashvalue = self.hashfunction(parameter, selected_type)
         # register = self.container[hashvalue].search(parameter, selected_type)
         if parameter in self.container[hashvalue]:
-            pass
+            register = self.container[hashvalue][parameter]
+            register = self._update_field(register)
+            self.container[hashvalue][parameter] = register
+            status("Register updated")
         else:
             # if register is None:
             error("{0} doesn't exists".format(parameter, selected_type))
@@ -283,7 +326,9 @@ class HashDataBase(object):
             self.container[hashvalue].pop(parameter, None)
             if self.collisions[hashvalue] > 0:
                 self.collisions[hashvalue] -= 1
-            verbose("Collisions in container {0}: {1}".format(hashvalue, self.collisions[hashvalue]))
+            verbose("Collisions in container {0}: {1}".format(
+                hashvalue, self.collisions[hashvalue]))
+            status("Register deleted")
         else:
             error("{0} could not be deleted".format(parameter, selected_type))
 

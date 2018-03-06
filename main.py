@@ -152,7 +152,9 @@ def main():
         if action == "1":
             table.insert()
         elif action == "2":
-            table.search()
+            result = table.search()
+            if result is not None:
+                print_to_console(result)
         elif action == "3":
             table.update()
         elif action == "4":
