@@ -9,6 +9,7 @@ MAIN_MENU = """
 2 - Find element
 3 - Update element
 4 - Erase element
+5 - Print
 E - Exit
 
 Select an option: """
